@@ -75,7 +75,7 @@ function completeRow() {
     const guess = currentRow.map((tile) => tile.letter).join('')
     if (!allWords.includes(guess) && guess !== answer) {
       shake()
-      showMessage(`Not in word list`)
+      showMessage(`Non présent dans la liste de mots`)
       return
     }
 
@@ -113,9 +113,7 @@ function completeRow() {
       setTimeout(() => {
         grid = genResultGrid()
         showMessage(
-          ['Genius', 'Magnificent', 'Impressive', 'Splendid', 'Great', 'Phew'][
-            currentRowIndex
-          ],
+          ['Génial', 'Magnifique', 'Impressionnant', 'Splendide', 'Super', 'Ouf'][currentRowIndex],
           -1
         )
         success = true
@@ -134,7 +132,7 @@ function completeRow() {
     }
   } else {
     shake()
-    showMessage('Not enough letters')
+    showMessage('Pas assez de lettres')
   }
 }
 
@@ -180,12 +178,6 @@ function genResultGrid() {
   </Transition>
   <header>
     <h1>VVORDLE</h1>
-    <a
-      id="source-link"
-      href="https://github.com/yyx990803/vue-wordle"
-      target="_blank"
-      >Source</a
-    >
   </header>
   <div id="board">
     <div
@@ -216,9 +208,24 @@ function genResultGrid() {
     </div>
   </div>
   <Keyboard @key="onKey" :letter-states="letterStates" />
+  <div class="source">
+    <a
+      id="source-link"
+      href="https://github.com/yyx990803/vue-wordle"
+      target="_blank"
+      >Source</a
+    >
+  </div>
 </template>
 
 <style scoped>
+.source{
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #ccc;
+    text-align: center;
+
+}
 #board {
   display: grid;
   grid-template-rows: repeat(6, 1fr);
