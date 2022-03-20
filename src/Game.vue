@@ -86,6 +86,7 @@ function changeMode(newState: boolean){
 }
 
 function resetState(){
+  allowInput = true
   answer = getWordOfTheDay(isInfinite)
   currentRowIndex = 0
   message = ""
