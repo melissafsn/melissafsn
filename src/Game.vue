@@ -117,9 +117,9 @@ function onKey(key: string) {
   if (!allowInput) return
   if (/^[a-zA-Z]$/.test(key)) {
     fillTile(key.toLowerCase())
-  } else if (key === 'Backspace') {
+  } else if (key === 'Suppr.') {
     clearTile()
-  } else if (key === 'Enter') {
+  } else if (key === 'Entrer') {
     completeRow()
   }
 }
