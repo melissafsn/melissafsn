@@ -17,6 +17,10 @@ header {
   position: relative;
 }
 
+header > a {
+  color: white;
+}
+
 .flex-center {
   align-items: center;
   display: flex;

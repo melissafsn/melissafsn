@@ -281,10 +281,6 @@ function genResultGrid() {
   opacity: 0;
 }
 
-.message > a {
-  color: white;
-}
-
 .message > a:active {
   color: white;
 }
