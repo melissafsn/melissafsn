@@ -1,21 +1,67 @@
+
+<template>
+  <Transition>
+    <div class="message" v-if="message">
+      {{ message }}
+      <pre v-if="grid">{{ grid }}</pre>
+    </div>
+  </Transition>
+  <header>
+    <h1>VSutom</h1>
+    <div class="flex-center">
+      <div class="pad-10">Mode aléatoire</div> <Toggle @isInfinite="changeMode" />
+      <img src="/reload.svg" class="reload" @click="resetState()">
+    </div>
+  </header>
+  <div id="board">
+    <div
+      v-for="(row, index) in board"
+      :class="[
+        'row',
+        shakeRowIndex === index && 'shake',
+        success && currentRowIndex === index && 'jump'
+      ]"
+    >
+      <div
+        v-for="(tile, index) in row"
+        :class="['tile', tile.letter && 'filled', tile.state && 'revealed']"
+      >
+        <div class="front" :style="{ transitionDelay: `${index * 300}ms` }">
+          {{ tile.letter }}
+        </div>
+        <div
+          :class="['back', tile.state]"
+          :style="{
+            transitionDelay: `${index * 300}ms`,
+            animationDelay: `${index * 100}ms`
+          }"
+        >
+          {{ tile.letter }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <Keyboard @key="onKey" :letter-states="letterStates" />
+  <div class="source">
+    <a href="https://github.com/c4software/vue-wordle" target="_blank">Source</a>
+  </div>
+</template>
+
 <script setup lang="ts">
-import { onUnmounted } from 'vue'
+import { onUnmounted, watch } from 'vue'
 import { getWordOfTheDay, allWords } from './words'
 import Keyboard from './Keyboard.vue'
 import { LetterState } from './types'
+import Toggle from './Toggle.vue';
+
+// Game Mode (Infinite or classic)
+let isInfinite = $ref(false)
 
 // Get word of the day
-const answer = getWordOfTheDay()
+let answer = $ref('')
 
 // Board state. Each tile is represented as { letter, state }
-const board = $ref(
-  Array.from({ length: 6 }, () =>
-    Array.from({ length: 5 }, () => ({
-      letter: '',
-      state: LetterState.INITIAL
-    }))
-  )
-)
+let board: { letter: string; state: LetterState; }[][] = $ref()
 
 // Current active row.
 let currentRowIndex = $ref(0)
@@ -28,7 +74,33 @@ let shakeRowIndex = $ref(-1)
 let success = $ref(false)
 
 // Keep track of revealed letters for the virtual keyboard
-const letterStates: Record<string, LetterState> = $ref({})
+let letterStates: Record<string, LetterState> = $ref({})
+
+function changeMode(newState: boolean){
+  isInfinite = newState
+  resetState()
+}
+
+function resetState(){
+  answer = getWordOfTheDay(isInfinite)
+  currentRowIndex = 0
+  message = ""
+  grid = ""
+  shakeRowIndex = -1
+  success = false
+  letterStates = {}
+
+  board = Array.from({ length: 6 }, () =>
+    Array.from({ length: answer.length }, () => ({
+      letter: '',
+      state: LetterState.INITIAL
+    }))
+  )
+
+  // Init first letter like Sutom
+  board[0][0].letter = answer[0]
+  board[0][0].state = LetterState.CORRECT
+}
 
 // Handle keyboard input.
 let allowInput = true
@@ -168,55 +240,6 @@ function genResultGrid() {
     .join('\n')
 }
 </script>
-
-<template>
-  <Transition>
-    <div class="message" v-if="message">
-      {{ message }}
-      <pre v-if="grid">{{ grid }}</pre>
-    </div>
-  </Transition>
-  <header>
-    <h1>VVORDLE</h1>
-  </header>
-  <div id="board">
-    <div
-      v-for="(row, index) in board"
-      :class="[
-        'row',
-        shakeRowIndex === index && 'shake',
-        success && currentRowIndex === index && 'jump'
-      ]"
-    >
-      <div
-        v-for="(tile, index) in row"
-        :class="['tile', tile.letter && 'filled', tile.state && 'revealed']"
-      >
-        <div class="front" :style="{ transitionDelay: `${index * 300}ms` }">
-          {{ tile.letter }}
-        </div>
-        <div
-          :class="['back', tile.state]"
-          :style="{
-            transitionDelay: `${index * 300}ms`,
-            animationDelay: `${index * 100}ms`
-          }"
-        >
-          {{ tile.letter }}
-        </div>
-      </div>
-    </div>
-  </div>
-  <Keyboard @key="onKey" :letter-states="letterStates" />
-  <div class="source">
-    <a
-      id="source-link"
-      href="https://github.com/yyx990803/vue-wordle"
-      target="_blank"
-      >Source</a
-    >
-  </div>
-</template>
 
 <style scoped>
 .source{

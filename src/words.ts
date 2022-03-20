@@ -1,6 +1,6 @@
 const defaultMessage = ' Using word of the day instead.'
 
-export function getWordOfTheDay() {
+export function getWordOfTheDay(isInfinite: boolean = false) {
   if (location.search) {
     try {
       const query = atob(location.search.slice(1))
@@ -17,12 +17,20 @@ export function getWordOfTheDay() {
   const now = new Date()
   const start = new Date(2022, 0, 0)
   const diff = Number(now) - Number(start)
-  let day = Math.floor(diff / (1000 * 60 * 60 * 24))
+  let day = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+  if (isInfinite) {
+    shuffledArr(answers)
+  }
+
   while (day > answers.length) {
     day -= answers.length
   }
-  return answers[day]
+
+  return answers[day].normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 }
+
+const shuffledArr = (array: any[]) => array.sort(() => 0.5 - Math.random());
 
 const answers = [
   "abaca",
