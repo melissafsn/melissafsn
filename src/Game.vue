@@ -3,6 +3,7 @@
   <Transition>
     <div class="message" v-if="message">
       {{ message }}
+      <a v-if="grid" :href="defLink">Définition</a>
       <pre v-if="grid">{{ grid }}</pre>
     </div>
   </Transition>
@@ -59,6 +60,7 @@ let isInfinite = $ref(false)
 
 // Get word of the day
 let answer = $ref('')
+let defLink = $computed(() => `https://fr.wiktionary.org/wiki/${answer}`)
 
 // Board state. Each tile is represented as { letter, state }
 let board: { letter: string; state: LetterState; }[][] = $ref()
