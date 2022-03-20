@@ -7,15 +7,14 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
+import { LocalStorageKey } from "./types";
 const emit = defineEmits(['isInfinite'])
-let isInfinite = ref(localStorage.getItem('infinite') == '1' ? true : false);
+let isInfinite = ref(localStorage.getItem(LocalStorageKey.IS_INFINITE) == '1' ? true : false);
 
 watch(isInfinite, (currentValue, oldValue) => {
-    localStorage.setItem('infinite', currentValue ? '1' : '0')
+    localStorage.setItem(LocalStorageKey.IS_INFINITE, currentValue ? '1' : '0')
     emit('isInfinite', isInfinite.value)
-})
-
-emit('isInfinite', isInfinite.value)
+}, {immediate: true})
 </script>
 
 <style scoped>

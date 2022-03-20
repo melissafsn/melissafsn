@@ -4,3 +4,10 @@ export const enum LetterState {
   PRESENT = 'present',
   ABSENT = 'absent'
 }
+
+export const enum LocalStorageKey {
+  BOARD = "board",
+  IS_INFINITE = "isInfinite",
+  ANSWER = "answer",
+  LETTER_STATE = "letterState"
+}

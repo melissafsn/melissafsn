@@ -10,10 +10,10 @@
     </div>
   </Transition>
   <header>
-    <h1>VSutom</h1>
+    <h1>Vue-Sutom</h1>
     <div class="flex-center">
       <div class="pad-10">Mode aléatoire</div> <Toggle @isInfinite="changeMode" />
-      <img src="/reload.svg" class="reload" @click="resetState()">
+      <img src="/reload.svg" class="reload" @click="() => resetState(true)">
     </div>
   </header>
   <div id="board">
@@ -51,21 +51,23 @@
 </template>
 
 <script setup lang="ts">
-import { onUnmounted, watch } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 import { getWordOfTheDay, allWords } from './words'
 import Keyboard from './Keyboard.vue'
-import { LetterState } from './types'
+import { LetterState, LocalStorageKey } from './types'
 import Toggle from './Toggle.vue';
-
-// Game Mode (Infinite or classic)
-let isInfinite = $ref(false)
 
 // Get word of the day
 let answer = $ref('')
 let defLink = $computed(() => `https://fr.wiktionary.org/wiki/${answer}`)
 
 // Board state. Each tile is represented as { letter, state }
-let board: { letter: string; state: LetterState; }[][] = $ref()
+let board = $ref(Array.from({ length: 6 }, () =>
+  Array.from({ length: answer.length }, () => ({
+    letter: '',
+    state: LetterState.INITIAL
+  }))
+))
 
 // Current active row.
 let currentRowIndex = $ref(0)
@@ -77,34 +79,79 @@ let grid = $ref('')
 let shakeRowIndex = $ref(-1)
 let success = $ref(false)
 
+// Game Mode (Infinite or classic)
+let isInfinite = $ref(false)
+
 // Keep track of revealed letters for the virtual keyboard
 let letterStates: Record<string, LetterState> = $ref({})
 
 function changeMode(newState: boolean){
   isInfinite = newState
-  resetState()
+  resetState(false)
 }
 
-function resetState(){
+function resetState(force: boolean = false){
+
+  // Try to restore the last state
+  if(!force){
+    restoreState()
+  } 
+
+  if(answer == "" || force){
+    // Generate a new board if no answer is present or if it's a reset
+    generateNewBoard() 
+  }
+
   allowInput = true
-  answer = getWordOfTheDay(isInfinite)
-  currentRowIndex = 0
+  currentRowIndex = board.findIndex((it: any) => it[1].letter == '') // Find the first row with empty word since we resume the state
   message = ""
   grid = ""
   shakeRowIndex = -1
   success = false
   letterStates = {}
 
+  saveState() // Save the current state as the last one
+  fillFirstLetter() // Fill the first letter to help a bit
+}
+
+function generateNewBoard(){
+  answer = getWordOfTheDay(isInfinite)
   board = Array.from({ length: 6 }, () =>
     Array.from({ length: answer.length }, () => ({
       letter: '',
       state: LetterState.INITIAL
     }))
   )
+}
 
+function saveState(){
+  localStorage.setItem(LocalStorageKey.ANSWER, answer)
+  localStorage.setItem(LocalStorageKey.BOARD, JSON.stringify(board))
+  localStorage.setItem(LocalStorageKey.LETTER_STATE, JSON.stringify(letterStates))
+}
+
+function restoreState(){
+  if(localStorage.getItem(LocalStorageKey.BOARD)){
+    board = JSON.parse(localStorage.getItem(LocalStorageKey.BOARD)!!)
+  }
+
+  if(localStorage.getItem(LocalStorageKey.ANSWER)){
+    answer = localStorage.getItem(LocalStorageKey.ANSWER) ?? ''
+  }
+
+  if(localStorage.getItem(LocalStorageKey.LETTER_STATE)){
+    letterStates = JSON.parse(localStorage.getItem(LocalStorageKey.LETTER_STATE)!!)
+  }
+}
+
+function fillFirstLetter(){
   // Init first letter like Sutom
-  board[0][0].letter = answer[0]
-  board[0][0].state = LetterState.CORRECT
+  if(board){
+    board[currentRowIndex][0].letter = answer[0]
+    board[currentRowIndex][0].state = LetterState.CORRECT
+  }
+
+  saveState()
 }
 
 // Handle keyboard input.
@@ -200,10 +247,12 @@ function completeRow() {
       currentRowIndex++
       setTimeout(() => {
         allowInput = true
+        fillFirstLetter()
       }, 1600)
     } else {
       // game over :(
       setTimeout(() => {
+        grid = genResultGrid()
         showMessage(answer.toUpperCase(), -1)
       }, 1600)
     }
