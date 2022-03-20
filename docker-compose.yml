@@ -1,0 +1,7 @@
+version: '3'
+services:
+  sutom:
+    restart: unless-stopped
+    build: .
+    ports:
+      - "6541:8080"
