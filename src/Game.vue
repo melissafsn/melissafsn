@@ -3,8 +3,10 @@
   <Transition>
     <div class="message" v-if="message">
       {{ message }}
-      <a v-if="grid" :href="defLink">Définition</a>
-      <pre v-if="grid">{{ grid }}</pre>
+      <div class="pad-10">
+        <a v-if="grid" target="_blank" :href="defLink">Définition</a>
+        <pre v-if="grid">{{ grid }}</pre>
+      </div>
     </div>
   </Transition>
   <header>
@@ -119,9 +121,9 @@ function onKey(key: string) {
   if (!allowInput) return
   if (/^[a-zA-Z]$/.test(key)) {
     fillTile(key.toLowerCase())
-  } else if (key === 'Suppr.') {
+  } else if (key === 'Suppr.' || key === 'Backspace') {
     clearTile()
-  } else if (key === 'Entrer') {
+  } else if (key === 'Entrer' || key === 'Enter') {
     completeRow()
   }
 }
@@ -278,6 +280,15 @@ function genResultGrid() {
 .message.v-leave-to {
   opacity: 0;
 }
+
+.message > a {
+  color: white;
+}
+
+.message > a:active {
+  color: white;
+}
+
 .row {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
