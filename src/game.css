@@ -17,10 +17,6 @@ header {
   position: relative;
 }
 
-.message > a {
-  color: white;
-}
-
 .flex-center {
   align-items: center;
   display: flex;

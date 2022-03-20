@@ -4,7 +4,7 @@
     <div class="message" v-if="message">
       {{ message }}
       <div class="pad-10">
-        <a v-if="grid" target="_blank" :href="defLink">Définition</a>
+        <a style="color: white" v-if="grid" target="_blank" :href="defLink">Définition</a>
         <pre v-if="grid">{{ grid }}</pre>
       </div>
     </div>
