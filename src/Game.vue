@@ -18,6 +18,7 @@
   </header>
   <div id="board">
     <div
+      :key="`row_${index}`"
       v-for="(row, index) in board"
       :class="[
         'row',
@@ -26,6 +27,7 @@
       ]"
     >
       <div
+        :key="`tile_${index}`"
         v-for="(tile, index) in row"
         :class="['tile', tile.letter && 'filled', tile.state && 'revealed']"
       >
@@ -189,6 +191,7 @@ function clearTile() {
   for (const tile of [...currentRow].reverse()) {
     if (tile.letter) {
       tile.letter = ''
+      tile.state = LetterState.INITIAL
       break
     }
   }
