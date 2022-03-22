@@ -74,6 +74,7 @@ let board = $ref(Array.from({ length: 6 }, () =>
 // Current active row.
 let currentRowIndex = $ref(0)
 const currentRow = $computed(() => board[currentRowIndex])
+const isEmptyRow = $computed(() => currentRow.findIndex((it:any) => !it.letter) == 1)
 
 // Feedback state: message and shake
 let message = $ref('')
@@ -179,6 +180,12 @@ function onKey(key: string) {
 }
 
 function fillTile(letter: string) {
+  // Ignore entry if the user enter the same letter as the first correct one 
+  if(isEmptyRow && currentRow[0].letter == letter){
+    return;
+  }
+
+  // Fill the next available letter
   for (const tile of currentRow) {
     if (!tile.letter) {
       tile.letter = letter
