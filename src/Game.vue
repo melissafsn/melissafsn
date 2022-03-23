@@ -207,7 +207,7 @@ function clearTile() {
 function completeRow() {
   if (currentRow.every((tile) => tile.letter)) {
     const guess = currentRow.map((tile) => tile.letter).join('')
-    if (!allWords.includes(guess) && guess !== answer) {
+    if (!allWords.find(it => it.normalize("NFD").replace(/[\u0300-\u036f]/g, "") == guess) && guess !== answer) {
       shake()
       showMessage(`Non présent dans la liste de mots`)
       return
