@@ -294,9 +294,7 @@ const icons = {
 function genResultGrid() {
   return board
     .slice(0, currentRowIndex + 1)
-    .map((row) => {
-      return row.map((tile) => icons[tile.state]).join('')
-    })
+    .map((row) => row.map((tile) => icons[tile.state]).join(''))
     .join('\n')
 }
 </script>
@@ -342,9 +340,7 @@ function genResultGrid() {
 }
 
 .row {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-gap: 5px;
+  display: flex;
 }
 .tile {
   width: 100%;
@@ -355,6 +351,7 @@ function genResultGrid() {
   text-transform: uppercase;
   user-select: none;
   position: relative;
+  margin: 3px;
 }
 .tile.filled {
   animation: zoom 0.2s;
