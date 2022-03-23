@@ -46,9 +46,6 @@
     </div>
   </div>
   <Keyboard @key="onKey" :letter-states="letterStates" />
-  <div class="source">
-    <a href="https://github.com/c4software/vue-wordle" target="_blank">Source</a>
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -318,7 +315,7 @@ function genResultGrid() {
   grid-gap: 5px;
   padding: 10px;
   box-sizing: border-box;
-  --height: min(420px, calc(var(--vh, 100vh) - 510px));
+  --height: min(420px, calc(var(--vh, 100vh) - 310px));
   height: var(--height);
   width: min(350px, calc(var(--height) / 6 * 5));
   margin: 0px auto;
