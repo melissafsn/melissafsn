@@ -30,13 +30,13 @@
         v-for="(tile, index) in row"
         :class="['tile', tile.letter && 'filled', tile.state && 'revealed']"
       >
-        <div class="front" :style="{ transitionDelay: `${index * 300}ms` }">
+        <div class="front" :style="{ transitionDelay: `${index * tileDelay}ms` }">
           {{ tile.letter }}
         </div>
         <div
           :class="['back', tile.state]"
           :style="{
-            transitionDelay: `${index * 300}ms`,
+            transitionDelay: `${index * tileDelay}ms`,
             animationDelay: `${index * 100}ms`
           }"
         >
@@ -58,6 +58,16 @@ import Toggle from './Toggle.vue';
 // Get word of the day
 let answer = $ref('')
 let defLink = $computed(() => `https://fr.wiktionary.org/wiki/${answer}`)
+
+let tileDelay = $computed(() => {
+  if(answer.length == 5){
+    return 300;
+  } else if (answer.length == 6){
+    return 200;
+  } else {
+    return 150;
+  }
+})
 
 // Board state. Each tile is represented as { letter, state }
 let board = $ref(Array.from({ length: 6 }, () =>
@@ -202,7 +212,7 @@ function clearTile() {
 
 function completeRow() {
   saveState()
-  
+
   if (currentRow.every((tile) => tile.letter)) {
     const guess = currentRow.map((tile) => tile.letter).join('')
     if (!allWords.find(it => it.normalize("NFD").replace(/[\u0300-\u036f]/g, "") == guess) && guess !== answer) {
