@@ -201,6 +201,8 @@ function clearTile() {
 }
 
 function completeRow() {
+  saveState()
+  
   if (currentRow.every((tile) => tile.letter)) {
     const guess = currentRow.map((tile) => tile.letter).join('')
     if (!allWords.find(it => it.normalize("NFD").replace(/[\u0300-\u036f]/g, "") == guess) && guess !== answer) {
