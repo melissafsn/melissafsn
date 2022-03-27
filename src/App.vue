@@ -1,7 +1,7 @@
 <template>
     <header>
       <router-link to="/" class="flex-center title">
-        <img v-if="!isRoot" src="back.svg" class="back">
+        <img v-if="!isRoot" src="/back.svg" class="back">
         <div v-else class="noAction"></div>
         <h1>Vue-Sutom</h1>
       </router-link>
