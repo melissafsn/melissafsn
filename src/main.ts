@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
-import Game from './Game.vue'
-import './game.css'
+import router from './router'
+import App from './App.vue'
 
 // resize for scaling the board size
 window.addEventListener('resize', onResize)
@@ -12,4 +12,6 @@ function onResize() {
   document.body.style.setProperty('--vh', window.innerHeight + 'px')
 }
 
-createApp(Game).mount('#app')
+createApp(App)
+  .use(router)
+  .mount('#app');

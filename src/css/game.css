@@ -1,6 +1,5 @@
 body {
   font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
-  text-align: center;
   max-width: 500px;
   margin: 0px auto;
 }
@@ -15,6 +14,21 @@ header {
   margin-bottom: 30px;
   padding-bottom: 10px;
   position: relative;
+  text-align: center;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.back {
+  height: 32px;
+}
+
+.noAction {
+  height: 32px;
+  width: 32px;
 }
 
 .flex-center {
@@ -29,6 +43,12 @@ header {
 }
 
 .reload {
+  cursor: pointer;
+  padding: 0 10px;
+  height: 34px;
+}
+
+.leader {
   cursor: pointer;
   padding: 0 10px;
   height: 34px;

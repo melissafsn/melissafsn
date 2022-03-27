@@ -8,13 +8,13 @@
       </div>
     </div>
   </Transition>
-  <header>
-    <h1>Vue-Sutom</h1>
-    <div class="flex-center">
-      <div class="pad-10">Mode aléatoire</div> <Toggle @isInfinite="changeMode" />
-      <img src="/reload.svg" class="reload" @click="() => resetState(true)">
-    </div>
-  </header>
+  
+  <teleport to='#headerContent' >
+    <div class="pad-10">Mode aléatoire</div> <Toggle @isInfinite="changeMode" />
+    <img src="/reload.svg" class="reload" @click="() => resetState(true)">
+    <router-link to="/score"><img src="/leader.svg" class="leader"></router-link>
+  </teleport>
+
   <div id="board">
     <div
       :key="`row_${index}`"
@@ -23,13 +23,11 @@
         'row',
         shakeRowIndex === index && 'shake',
         success && currentRowIndex === index && 'jump'
-      ]"
-    >
+      ]">
       <div
         :key="`tile_${index}`"
         v-for="(tile, index) in row"
-        :class="['tile', tile.letter && 'filled', tile.state && 'revealed']"
-      >
+        :class="['tile', tile.letter && 'filled', tile.state && 'revealed']">
         <div class="front" :style="{ transitionDelay: `${index * tileDelay}ms` }">
           {{ tile.letter }}
         </div>
@@ -50,9 +48,9 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, watch } from 'vue'
-import { getWordOfTheDay, allWords } from './words'
+import { getWordOfTheDay, allWords } from './../models/words'
 import Keyboard from './Keyboard.vue'
-import { LetterState, LocalStorageKey } from './types'
+import { icons, LetterState, LocalStorageKey } from './../models/types'
 import Toggle from './Toggle.vue';
 
 // Get word of the day
@@ -213,8 +211,8 @@ function clearTile() {
 function completeRow() {
   saveState()
 
-  if (currentRow.every((tile) => tile.letter)) {
-    const guess = currentRow.map((tile) => tile.letter).join('')
+  if (currentRow.every((tile: { letter: any; }) => tile.letter)) {
+    const guess = currentRow.map((tile: { letter: any; }) => tile.letter).join('')
     if (!allWords.find(it => it.normalize("NFD").replace(/[\u0300-\u036f]/g, "") == guess) && guess !== answer) {
       shake()
       showMessage(`Non présent dans la liste de mots`)
@@ -223,14 +221,14 @@ function completeRow() {
 
     const answerLetters: (string | null)[] = answer.split('')
     // first pass: mark correct ones
-    currentRow.forEach((tile, i) => {
+    currentRow.forEach((tile: { letter: string; state: LetterState; }, i: number) => {
       if (answerLetters[i] === tile.letter) {
         tile.state = letterStates[tile.letter] = LetterState.CORRECT
         answerLetters[i] = null
       }
     })
     // second pass: mark the present
-    currentRow.forEach((tile) => {
+    currentRow.forEach((tile: { state: LetterState; letter: string; }) => {
       if (!tile.state && answerLetters.includes(tile.letter)) {
         tile.state = LetterState.PRESENT
         answerLetters[answerLetters.indexOf(tile.letter)] = null
@@ -240,7 +238,7 @@ function completeRow() {
       }
     })
     // 3rd pass: mark absent
-    currentRow.forEach((tile) => {
+    currentRow.forEach((tile: { state: LetterState; letter: string|number; }) => {
       if (!tile.state) {
         tile.state = LetterState.ABSENT
         if (!letterStates[tile.letter]) {
@@ -250,7 +248,7 @@ function completeRow() {
     })
 
     allowInput = false
-    if (currentRow.every((tile) => tile.state === LetterState.CORRECT)) {
+    if (currentRow.every((tile: { state: LetterState; }) => tile.state === LetterState.CORRECT)) {
       // yay!
       setTimeout(() => {
         grid = genResultGrid()
@@ -296,14 +294,7 @@ function shake() {
   }, 1000)
 }
 
-const icons = {
-  [LetterState.CORRECT]: '🟩',
-  [LetterState.PRESENT]: '🟨',
-  [LetterState.ABSENT]: '⬜',
-  [LetterState.INITIAL]: null
-}
-
-function genResultGrid() {
+function genResultGrid(): string {
   return board
     .slice(0, currentRowIndex + 1)
     .map((row) => row.map((tile) => icons[tile.state]).join(''))
@@ -319,6 +310,7 @@ function genResultGrid() {
     text-align: center;
 
 }
+
 #board {
   display: grid;
   grid-template-rows: repeat(6, 1fr);

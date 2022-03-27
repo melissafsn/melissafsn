@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LetterState } from './types'
+import { LetterState } from './../models/types'
 
 defineProps<{
   letterStates: Record<string, LetterState>
@@ -18,9 +18,10 @@ const rows = [
 
 <template>
   <div id="keyboard">
-    <div class="row" v-for="(row, i) in rows">
+    <div class="row" :key="`row_${row}`" v-for="(row, i) in rows">
       <div class="spacer" v-if="i === 1"></div>
       <button
+        :key="key"
         v-for="key in row"
         :class="[key.length > 1 && 'big', letterStates[key]]"
         @click="$emit('key', key)"

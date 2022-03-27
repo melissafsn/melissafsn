@@ -11,3 +11,10 @@ export const enum LocalStorageKey {
   ANSWER = "answer",
   LETTER_STATE = "letterState"
 }
+
+export const icons = {
+  [LetterState.CORRECT]: '🟩',
+  [LetterState.PRESENT]: '🟨',
+  [LetterState.ABSENT]: '⬜',
+  [LetterState.INITIAL]: ''
+}

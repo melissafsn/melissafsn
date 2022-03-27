@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { LocalStorageKey } from "./types";
+import { LocalStorageKey } from "./../models/types";
 const emit = defineEmits(['isInfinite'])
 let isInfinite = ref(localStorage.getItem(LocalStorageKey.IS_INFINITE) == '1' ? true : false);
 
