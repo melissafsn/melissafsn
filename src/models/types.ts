@@ -9,6 +9,7 @@ export const enum LocalStorageKey {
   BOARD = "board",
   IS_INFINITE = "isInfinite",
   ANSWER = "answer",
+  SCORE = "score",
   LETTER_STATE = "letterState"
 }
 

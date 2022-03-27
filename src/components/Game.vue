@@ -251,6 +251,7 @@ function completeRow() {
     if (currentRow.every((tile: { state: LetterState; }) => tile.state === LetterState.CORRECT)) {
       // yay!
       setTimeout(() => {
+        saveResult()
         grid = genResultGrid()
         showMessage(
           ['Génial', 'Magnifique', 'Impressionnant', 'Splendide', 'Super', 'Ouf'][currentRowIndex],
@@ -276,6 +277,12 @@ function completeRow() {
     shake()
     showMessage('Pas assez de lettres')
   }
+}
+
+function saveResult(){
+  const score = (JSON.parse(localStorage.getItem(LocalStorageKey.SCORE)!!) || Array.from({ length: 6 }).map((_, it) => ({label: `${it + 1}/6`, value: 0}))) as {label: string, value: number}[];
+  score[currentRowIndex].value++;
+  localStorage.setItem(LocalStorageKey.SCORE, JSON.stringify(score))
 }
 
 function showMessage(msg: string, time = 1000) {
@@ -323,6 +330,7 @@ function genResultGrid(): string {
   margin: 0px auto;
 }
 .message {
+  text-align: center;
   position: absolute;
   left: 50%;
   top: 80px;
