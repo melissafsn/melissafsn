@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LetterState } from './../models/types'
+import { LetterState } from '../models/types'
 
 defineProps<{
   letterStates: Record<string, LetterState>

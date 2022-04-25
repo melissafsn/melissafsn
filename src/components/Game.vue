@@ -8,7 +8,7 @@
       </div>
     </div>
   </Transition>
-  
+
   <teleport to='#headerContent' >
     <div class="pad-10">Mode aléatoire</div> <Toggle @isInfinite="changeMode" />
     <img src="/reload.svg" class="reload" @click="() => resetState(true)">
@@ -47,11 +47,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, watch } from 'vue'
-import { getWordOfTheDay, allWords } from './../models/words'
+import { onUnmounted } from 'vue'
+import {WordsManipulation} from '../models/wordsManipulation'
 import Keyboard from './Keyboard.vue'
-import { icons, LetterState, LocalStorageKey } from './../models/types'
+import { icons, LetterState, LocalStorageKey } from '../models/types'
 import Toggle from './Toggle.vue';
+import {LocalStorageManipulation} from "../models/LocalStorageManipulation";
 
 // Get word of the day
 let answer = $ref('')
@@ -98,15 +99,14 @@ function changeMode(newState: boolean){
 }
 
 function resetState(force: boolean = false){
-
   // Try to restore the last state
   if(!force){
     restoreState()
-  } 
+  }
 
   if(answer == "" || force){
     // Generate a new board if no answer is present or if it's a reset
-    generateNewBoard() 
+    generateNewBoard()
   }
 
   allowInput = true
@@ -117,12 +117,16 @@ function resetState(force: boolean = false){
   success = false
   letterStates = {}
 
+  if(currentRowIndex == -1){
+    currentRowIndex = 0;
+  }
+
   saveState() // Save the current state as the last one
   fillFirstLetter() // Fill the first letter to help a bit
 }
 
 function generateNewBoard(){
-  answer = getWordOfTheDay(isInfinite)
+  answer = WordsManipulation.getWordOfTheDay(isInfinite)
   board = Array.from({ length: 6 }, () =>
     Array.from({ length: answer.length }, () => ({
       letter: '',
@@ -132,22 +136,20 @@ function generateNewBoard(){
 }
 
 function saveState(){
-  localStorage.setItem(LocalStorageKey.ANSWER, answer)
-  localStorage.setItem(LocalStorageKey.BOARD, JSON.stringify(board))
-  localStorage.setItem(LocalStorageKey.LETTER_STATE, JSON.stringify(letterStates))
+  LocalStorageManipulation.put(LocalStorageKey.ANSWER, answer, true)
+  LocalStorageManipulation.put(LocalStorageKey.BOARD, board)
+  LocalStorageManipulation.put(LocalStorageKey.LETTER_STATE, letterStates)
 }
 
 function restoreState(){
-  if(localStorage.getItem(LocalStorageKey.BOARD)){
-    board = JSON.parse(localStorage.getItem(LocalStorageKey.BOARD)!!)
+  if(LocalStorageManipulation.has(LocalStorageKey.BOARD)){
+    board = LocalStorageManipulation.get(LocalStorageKey.BOARD)
   }
 
-  if(localStorage.getItem(LocalStorageKey.ANSWER)){
-    answer = localStorage.getItem(LocalStorageKey.ANSWER) ?? ''
-  }
+  answer = LocalStorageManipulation.get(LocalStorageKey.ANSWER, '', true)
 
-  if(localStorage.getItem(LocalStorageKey.LETTER_STATE)){
-    letterStates = JSON.parse(localStorage.getItem(LocalStorageKey.LETTER_STATE)!!)
+  if(LocalStorageManipulation.has(LocalStorageKey.LETTER_STATE)){
+    letterStates = LocalStorageManipulation.get(LocalStorageKey.LETTER_STATE)
   }
 }
 
@@ -184,7 +186,7 @@ function onKey(key: string) {
 }
 
 function fillTile(letter: string) {
-  // Ignore entry if the user enter the same letter as the first correct one 
+  // Ignore entry if the user enter the same letter as the first correct one
   if(isEmptyRow && currentRow[0].letter == letter){
     return;
   }
@@ -213,7 +215,7 @@ function completeRow() {
 
   if (currentRow.every((tile: { letter: any; }) => tile.letter)) {
     const guess = currentRow.map((tile: { letter: any; }) => tile.letter).join('')
-    if (!allWords.find(it => it.normalize("NFD").replace(/[\u0300-\u036f]/g, "") == guess) && guess !== answer) {
+    if (!WordsManipulation.allWords.find(it => it.normalize("NFD").replace(/[\u0300-\u036f]/g, "") == guess) && guess !== answer) {
       shake()
       showMessage(`Non présent dans la liste de mots`)
       return
@@ -280,9 +282,9 @@ function completeRow() {
 }
 
 function saveResult(){
-  const score = (JSON.parse(localStorage.getItem(LocalStorageKey.SCORE)!!) || Array.from({ length: 6 }).map((_, it) => ({label: `${it + 1}/6`, value: 0}))) as {label: string, value: number}[];
+  const score = LocalStorageManipulation.get(LocalStorageKey.SCORE, Array.from({ length: 6 }).map((_, it) => ({label: `${it + 1}/6`, value: 0}))) as {label: string, value: number}[];
   score[currentRowIndex].value++;
-  localStorage.setItem(LocalStorageKey.SCORE, JSON.stringify(score))
+  LocalStorageManipulation.put(LocalStorageKey.SCORE, score)
 }
 
 function showMessage(msg: string, time = 1000) {
