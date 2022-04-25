@@ -1,7 +1,7 @@
 <template>
     <header>
       <router-link to="/" class="flex-center title">
-        <img v-if="!isRoot" src="/back.svg" class="back">
+        <img v-if="!isRoot" src="/back.svg" alt="Go Back" class="back">
         <div v-else class="noAction"></div>
         <h1>Vue-Sutom</h1>
       </router-link>
@@ -13,10 +13,12 @@
 <script lang="ts" setup>
   import { useRoute } from 'vue-router';
   import './css/game.css'
+
+  // Returns the current route location. Equivalent to using $route inside templates.
   const route = useRoute()
 
+  // Is currentRoot the / ?
   const isRoot = $computed(() => route.path == '/')
-
 </script>
 
 <style scoped>

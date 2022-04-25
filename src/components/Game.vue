@@ -126,7 +126,7 @@ function resetState(force: boolean = false){
 }
 
 function generateNewBoard(){
-  answer = WordsManipulation.getWordOfTheDay(isInfinite)
+  answer = WordsManipulation.getNextWord(isInfinite)
   board = Array.from({ length: 6 }, () =>
     Array.from({ length: answer.length }, () => ({
       letter: '',

@@ -64366,7 +64366,7 @@ export class WordsManipulation {
     return this.answers;
   }
 
-  public static getWordOfTheDay(isInfinite: boolean = false) {
+  public static getNextWord(isInfinite: boolean = false) {
     const now = new Date()
     const start = new Date(2022, 0, 0)
     const diff = Number(now) - Number(start)
