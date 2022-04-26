@@ -50,11 +50,14 @@
 import { onUnmounted } from 'vue'
 import {WordsManipulation} from '../models/wordsManipulation'
 import Keyboard from './Keyboard.vue'
-import { icons, LetterState, LocalStorageKey } from '../models/types'
+import {icons, LetterState, LocalStorageKey, Score} from '../models/types'
 import Toggle from './Toggle.vue';
 import {LocalStorageManipulation} from "../models/localStorageManipulation";
+import ScoreManipulation from "../models/scoreManipulation";
 
 const wordsManipulation = new WordsManipulation()
+const localStorageManipulation = new LocalStorageManipulation()
+const scoreManipulation = new ScoreManipulation()
 
 // Get word of the day
 let answer = $ref('')
@@ -138,20 +141,20 @@ function generateNewBoard(){
 }
 
 function saveState(){
-  LocalStorageManipulation.put(LocalStorageKey.ANSWER, answer, true)
-  LocalStorageManipulation.put(LocalStorageKey.BOARD, board)
-  LocalStorageManipulation.put(LocalStorageKey.LETTER_STATE, letterStates)
+  localStorageManipulation.put(LocalStorageKey.ANSWER, answer, true)
+  localStorageManipulation.put(LocalStorageKey.BOARD, board)
+  localStorageManipulation.put(LocalStorageKey.LETTER_STATE, letterStates)
 }
 
 function restoreState(){
-  if(LocalStorageManipulation.has(LocalStorageKey.BOARD)){
-    board = LocalStorageManipulation.get(LocalStorageKey.BOARD)
+  if(localStorageManipulation.has(LocalStorageKey.BOARD)){
+    board = localStorageManipulation.get(LocalStorageKey.BOARD)
   }
 
-  answer = LocalStorageManipulation.get(LocalStorageKey.ANSWER, '', true)
+  answer = localStorageManipulation.get(LocalStorageKey.ANSWER, '', true)
 
-  if(LocalStorageManipulation.has(LocalStorageKey.LETTER_STATE)){
-    letterStates = LocalStorageManipulation.get(LocalStorageKey.LETTER_STATE)
+  if(localStorageManipulation.has(LocalStorageKey.LETTER_STATE)){
+    letterStates = localStorageManipulation.get(LocalStorageKey.LETTER_STATE)
   }
 }
 
@@ -281,9 +284,7 @@ function completeRow() {
 }
 
 function saveResult(){
-  const score = LocalStorageManipulation.get(LocalStorageKey.SCORE, Array.from({ length: 6 }).map((_, it) => ({label: `${it + 1}/6`, value: 0}))) as {label: string, value: number}[];
-  score[currentRowIndex].value++;
-  LocalStorageManipulation.put(LocalStorageKey.SCORE, score)
+  scoreManipulation.put(currentRowIndex)
 }
 
 function showMessage(msg: string, time = 1000) {

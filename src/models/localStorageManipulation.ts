@@ -1,5 +1,7 @@
-export class LocalStorageManipulation {
-  static put(key: string, values: any, raw: boolean = false): any {
+import {LocalStorage} from "./types";
+
+export class LocalStorageManipulation implements LocalStorage{
+  put(key: string, values: any, raw: boolean = false): any {
     if(!raw) {
       localStorage.setItem(key, JSON.stringify(values))
     } else {
@@ -7,7 +9,7 @@ export class LocalStorageManipulation {
     }
   }
 
-  static get(key: string, defaultValue: any = null, raw: boolean = false): any{
+  get(key: string, defaultValue: any = null, raw: boolean = false): any{
     if(!raw) {
       return JSON.parse(localStorage.getItem(key)!!) || defaultValue;
     } else {
@@ -15,11 +17,11 @@ export class LocalStorageManipulation {
     }
   }
 
-  static has(key: string){
-    return localStorage.getItem(key)!!
+  has(key: string): boolean {
+    return Boolean(localStorage.getItem(key)!!)
   }
 
-  static remove(key: string){
+  remove(key: string){
     localStorage.remove(key)
   }
 }

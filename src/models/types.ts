@@ -19,3 +19,12 @@ export const icons = {
   [LetterState.ABSENT]: '⬜',
   [LetterState.INITIAL]: ''
 }
+
+export type Score = {label: string, value: number}
+
+export interface LocalStorage {
+  put(key: string, values: any, raw: boolean): any;
+  get(key: string, defaultValue: any, raw: boolean): any;
+  remove(key: string): void;
+  has(key: string): boolean;
+}

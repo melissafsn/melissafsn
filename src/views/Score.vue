@@ -16,11 +16,12 @@
 </template>
 
 <script lang="ts" setup>
-import { LocalStorageKey } from '../models/types';
-import {LocalStorageManipulation} from "../models/localStorageManipulation";
+import ScoreManipulation from "../models/scoreManipulation";
 
-const localResult = LocalStorageManipulation.get(LocalStorageKey.SCORE, Array.from({ length: 6 }).map((_, it) => ({label: `${it + 1}/6`, value: 0}))) as {label: string, value: number}[];
-const localTotal = $computed(() => localResult.reduce((prev, current) => current.value + prev, 0));
+const scoreManipulation = new ScoreManipulation()
+
+const localResult = scoreManipulation.get();
+const localTotal = $computed(() => scoreManipulation.total);
 </script>
 
 <style scoped>

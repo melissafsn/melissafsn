@@ -1,7 +1,7 @@
 import {Words} from "./words";
 
 export class WordsManipulation extends Words{
-  public get allWords(): any[] {
+  public get allWords(): string[] {
     return this.answers;
   }
 
