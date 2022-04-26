@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { LocalStorageKey } from '../models/types';
-import {LocalStorageManipulation} from "../models/LocalStorageManipulation";
+import {LocalStorageManipulation} from "../models/localStorageManipulation";
 
 const localResult = LocalStorageManipulation.get(LocalStorageKey.SCORE, Array.from({ length: 6 }).map((_, it) => ({label: `${it + 1}/6`, value: 0}))) as {label: string, value: number}[];
 const localTotal = $computed(() => localResult.reduce((prev, current) => current.value + prev, 0));

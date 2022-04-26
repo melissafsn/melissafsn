@@ -1,4 +1,4 @@
-export class LocalStorageManipulation{
+export class LocalStorageManipulation {
   static put(key: string, values: any, raw: boolean = false): any {
     if(!raw) {
       localStorage.setItem(key, JSON.stringify(values))

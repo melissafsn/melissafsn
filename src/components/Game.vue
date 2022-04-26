@@ -52,7 +52,9 @@ import {WordsManipulation} from '../models/wordsManipulation'
 import Keyboard from './Keyboard.vue'
 import { icons, LetterState, LocalStorageKey } from '../models/types'
 import Toggle from './Toggle.vue';
-import {LocalStorageManipulation} from "../models/LocalStorageManipulation";
+import {LocalStorageManipulation} from "../models/localStorageManipulation";
+
+const wordsManipulation = new WordsManipulation()
 
 // Get word of the day
 let answer = $ref('')
@@ -126,7 +128,7 @@ function resetState(force: boolean = false){
 }
 
 function generateNewBoard(){
-  answer = WordsManipulation.getNextWord(isInfinite)
+  answer = wordsManipulation.getNextWord(isInfinite)
   board = Array.from({ length: 6 }, () =>
     Array.from({ length: answer.length }, () => ({
       letter: '',
@@ -165,11 +167,8 @@ function fillFirstLetter(){
 
 // Handle keyboard input.
 let allowInput = true
-
 const onKeyup = (e: KeyboardEvent) => onKey(e.key)
-
 window.addEventListener('keyup', onKeyup)
-
 onUnmounted(() => {
   window.removeEventListener('keyup', onKeyup)
 })
@@ -215,7 +214,7 @@ function completeRow() {
 
   if (currentRow.every((tile: { letter: any; }) => tile.letter)) {
     const guess = currentRow.map((tile: { letter: any; }) => tile.letter).join('')
-    if (!WordsManipulation.allWords.find(it => it.normalize("NFD").replace(/[\u0300-\u036f]/g, "") == guess) && guess !== answer) {
+    if (!wordsManipulation.allWords.find(it => it.normalize("NFD").replace(/[\u0300-\u036f]/g, "") == guess) && guess !== answer) {
       shake()
       showMessage(`Non présent dans la liste de mots`)
       return
